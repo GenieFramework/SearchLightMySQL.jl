@@ -12,4 +12,9 @@ Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 SearchLight = "340e8cb6-72eb-11e8-37ce-c97ebeb32050"
 
 [compat]
+DataFrames = "0.20"
+DataStreams = "0.4"
+MySQL = "0.7"
+Revise = "2"
+SearchLight = "0"
 julia = "1"
