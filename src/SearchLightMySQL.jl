@@ -149,7 +149,7 @@ function SearchLight.query(sql::String, conn::DatabaseHandle = CONNECTIONS[end];
     end
 
     result = if startswith(sql, "INSERT ")
-      DataFrames.DataFrame(SearchLight.LAST_INSERT_ID_LABEL => last_insert_id(conn))
+      DataFrames.DataFrame(SearchLight.LAST_INSERT_ID_LABEL => MySQL.insertid(conn))
     elseif startswith(sql, "ALTER ") || startswith(sql, "CREATE ") || startswith(sql, "DROP ") || startswith(sql, "DELETE ") || startswith(sql, "UPDATE ")
       DataFrames.DataFrame(:result => "OK")
     else
@@ -216,7 +216,7 @@ end
 function SearchLight.delete(m::T)::T where {T<:SearchLight.AbstractModel}
   SearchLight.ispersisted(m) || throw(SearchLight.Exceptions.NotPersistedException(m))
 
-  "DELETE FROM $(SearchLight.table_name(_m)) WHERE $(SearchLight.primary_key_name(m)) = '$(m.id.value)'" |> SearchLight.query
+  "DELETE FROM $(SearchLight.table_name(m)) WHERE $(SearchLight.primary_key_name(m)) = '$(m.id.value)'" |> SearchLight.query
 
   m.id = SearchLight.DbId()
 
@@ -279,12 +279,12 @@ end
 
 
 function SearchLight.to_limit_part(l::SearchLight.SQLLimit) :: String
-  l.value != "ALL" ? string("LIMIT ", l) : ""
+  l.value != "ALL" ? string("LIMIT ", string(l)) : ""
 end
 
 
 function SearchLight.to_offset_part(o::Int) :: String
-  o != 0 ? string("OFFSET ", o) : ""
+  o != 0 ? string("OFFSET ", string(o)) : ""
 end
 
 
@@ -315,21 +315,21 @@ end
 
 
 """
-    create_migrations_table(table_name::String)::Bool
+    create_migrations_table(table_name::String)::Nothing
 
 Runs a SQL DB query that creates the table `table_name` with the structure needed to be used as the DB migrations table.
 The table should contain one column, `version`, unique, as a string of maximum 30 chars long.
-Returns `true` on success.
 """
-function SearchLight.Migration.create_migrations_table(table_name::String = SearchLight.config.db_migrations_table_name) :: Bool
-  "CREATE TABLE `$table_name` (
+function SearchLight.Migration.create_migrations_table(table_name::String = SearchLight.config.db_migrations_table_name) :: Nothing
+  SearchLight.query(
+    "CREATE TABLE `$table_name` (
     `version` varchar(30) NOT NULL DEFAULT '',
     PRIMARY KEY (`version`)
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8" |> SearchLight.query
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8", internal = true)
 
   @info "Created table $table_name"
 
-  true
+  nothing
 end
 
 
@@ -361,35 +361,35 @@ end
 
 function SearchLight.Migration.add_index(table_name::Union{String,Symbol}, column_name::Union{String,Symbol}; name::Union{String,Symbol} = "", unique::Bool = false) :: Nothing
   name = isempty(name) ? SearchLight.index_name(table_name, column_name) : name
-  "CREATE $(unique ? "UNIQUE" : "") INDEX `$(name)` ON `$table_name` (`$column_name`)" |> SearchLight.query
+  SearchLight.query("CREATE $(unique ? "UNIQUE" : "") INDEX `$(name)` ON `$table_name` (`$column_name`)", internal = true)
 
   nothing
 end
 
 
 function SearchLight.Migration.add_column(table_name::Union{String,Symbol}, name::Union{String,Symbol}, column_type::Union{String,Symbol}; default::Union{String,Symbol,Nothing} = nothing, limit::Union{Int,Nothing} = nothing, not_null::Bool = false) :: Nothing
-  "ALTER TABLE `$table_name` ADD $(SearchLight.column(name, column_type, default = default, limit = limit, not_null = not_null))" |> SearchLight.query
+  SearchLight.query("ALTER TABLE `$table_name` ADD $(SearchLight.column(name, column_type, default = default, limit = limit, not_null = not_null))", internal = true)
 
   nothing
 end
 
 
 function SearchLight.Migration.drop_table(name::Union{String,Symbol}) :: Nothing
-  "DROP TABLE `$name`" |> SearchLight.query
+  SearchLight.query("DROP TABLE `$name`", internal = true)
 
   nothing
 end
 
 
 function SearchLight.Migration.remove_column(table_name::Union{String,Symbol}, name::Union{String,Symbol}, options::Union{String,Symbol} = "") :: Nothing
-  "ALTER TABLE `$table_name` DROP COLUMN `$name` $options" |> SearchLight.query
+  SearchLight.query("ALTER TABLE `$table_name` DROP COLUMN `$name` $options", internal = true)
 
   nothing
 end
 
 
 function SearchLight.Migration.remove_index(table_name::Union{String,Symbol}, name::Union{String,Symbol}, options::Union{String,Symbol} = "") :: Nothing
-  "DROP INDEX `$name` ON `$table_name` $options" |> SearchLight.query
+  SearchLight.query("DROP INDEX `$name` ON `$table_name` $options", internal = true)
 
   nothing
 end
