@@ -1,9 +1,10 @@
 name = "SearchLightMySQL"
 uuid = "1297d576-4826-11ea-035e-9995c721bad1"
 authors = ["Adrian Salceanu <e@essenciary.com>"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
+DBInterface = "a10d1c49-ce27-4219-8d33-6db1a4562965"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 DataStreams = "9a8bc11e-79be-5b39-94d7-1ccc349a1a85"
 Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -14,7 +15,7 @@ SearchLight = "340e8cb6-72eb-11e8-37ce-c97ebeb32050"
 [compat]
 DataFrames = "0.20"
 DataStreams = "0.4"
-MySQL = "0.7"
+MySQL = "1"
 Revise = "2"
 SearchLight = "0"
 julia = "1"

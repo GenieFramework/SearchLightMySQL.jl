@@ -3,6 +3,7 @@ module SearchLightMySQL
 import Revise
 import MySQL, DataFrames, DataStreams, Logging
 import SearchLight
+import DBInterface
 
 
 #
@@ -18,7 +19,7 @@ function SearchLight.column_field_name()
   COLUMN_NAME_FIELD_NAME
 end
 
-const DatabaseHandle = MySQL.MySQLHandle
+const DatabaseHandle = MySQL.Connection
 const ResultHandle   = DataStreams.Data.Rows
 
 const TYPE_MAPPINGS = Dict{Symbol,Symbol}( # Julia => MySQL
@@ -52,7 +53,7 @@ Connects to the database and returns a handle.
 """
 function SearchLight.connect(conn_data::Dict = SearchLight.config.db_config_settings) :: DatabaseHandle
   push!(CONNECTIONS,
-        MySQL.connect(conn_data["host"], conn_data["username"], get(conn_data, "password", "");
+        DBInterface.connect(MySQL.Connection, conn_data["host"], conn_data["username"], get(conn_data, "password", "");
                   db    = conn_data["database"],
                   port  = get(conn_data, "port", 3306),
                   opts  = Dict(getfield(MySQL.API, Symbol(k))=>v for (k,v) in conn_data["options"]))
@@ -66,7 +67,7 @@ end
 Disconnects from database.
 """
 function SearchLight.disconnect(conn::DatabaseHandle = SearchLight.connection()) :: Nothing
-  MySQL.disconnect(conn)
+  DBInterface.close!(conn)
 end
 
 
@@ -147,9 +148,9 @@ function SearchLight.query(sql::String, conn::DatabaseHandle = SearchLight.conne
   try
     _result = if SearchLight.config.log_queries && ! internal
       @info sql
-      @time MySQL.Query(conn, sql)
+      @time DBInterface.execute(conn, sql)
     else
-      MySQL.Query(conn, sql)
+      DBInterface.execute(conn, sql)
     end
 
     result = if startswith(sql, "INSERT ")
