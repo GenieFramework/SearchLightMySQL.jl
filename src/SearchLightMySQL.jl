@@ -169,13 +169,14 @@ function SearchLight.query(sql::String, conn::DatabaseHandle = SearchLight.conne
     @error """MySQL error when running
               $sql """
 
-    if isa(ex, MySQL.MySQLInternalError) && (ex.errno == 2013 || ex.errno == 2006)
+    if (ex.errno == 2013 || ex.errno == 2006)
       @warn ex, " ...Attempting reconnection"
 
       pop!(CONNECTIONS)
 
       SearchLight.query(sql, SearchLight.connect())
     else
+      @error ex
       rethrow(ex)
     end
   end
