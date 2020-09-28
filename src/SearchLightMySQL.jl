@@ -1,6 +1,5 @@
 module SearchLightMySQL
 
-import Revise
 import MySQL, DataFrames, DataStreams, Logging
 import SearchLight
 import DBInterface
