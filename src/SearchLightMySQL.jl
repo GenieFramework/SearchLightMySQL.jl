@@ -158,7 +158,7 @@ function SearchLight.query(sql::String, conn::DatabaseHandle = SearchLight.conne
     end
 
     result = if startswith(sql, "INSERT ")
-      DataFrames.DataFrame(SearchLight.LAST_INSERT_ID_LABEL => MySQL.insertid(conn))
+      DataFrames.DataFrame(SearchLight.LAST_INSERT_ID_LABEL => DBInterface.lastrowid(_result))
     elseif startswith(sql, "ALTER ") || startswith(sql, "CREATE ") || startswith(sql, "DROP ") || startswith(sql, "DELETE ") || startswith(sql, "UPDATE ")
       DataFrames.DataFrame(:result => "OK")
     else
