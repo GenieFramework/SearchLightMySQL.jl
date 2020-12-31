@@ -1,7 +1,7 @@
 name = "SearchLightMySQL"
 uuid = "1297d576-4826-11ea-035e-9995c721bad1"
 authors = ["Adrian Salceanu <e@essenciary.com>"]
-version = "0.5"
+version = "0.6"
 
 [deps]
 DBInterface = "a10d1c49-ce27-4219-8d33-6db1a4562965"
@@ -13,8 +13,8 @@ SearchLight = "340e8cb6-72eb-11e8-37ce-c97ebeb32050"
 
 [compat]
 DBInterface = "2"
-DataFrames = "0.21"
+DataFrames = "0.22"
 DataStreams = "0.4"
 MySQL = "1"
-SearchLight = "0.21"
+SearchLight = "0.22"
 julia = "1"
