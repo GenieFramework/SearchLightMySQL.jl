@@ -159,7 +159,9 @@ function SearchLight.query(sql::String, conn::DatabaseHandle = SearchLight.conne
 
     result = if startswith(sql, "INSERT ")
       DataFrames.DataFrame(SearchLight.LAST_INSERT_ID_LABEL => DBInterface.lastrowid(_result))
-    elseif startswith(sql, "ALTER ") || startswith(sql, "CREATE ") || startswith(sql, "DROP ") || startswith(sql, "DELETE ") || startswith(sql, "UPDATE ")
+    elseif startswith(sql, "DELETE ") || startswith(sql, "UPDATE ")
+      DataFrames.DataFrame(:result => "OK", :rows_affected => _result.rows_affected)
+    elseif startswith(sql, "ALTER ") || startswith(sql, "CREATE ") || startswith(sql, "DROP ")
       DataFrames.DataFrame(:result => "OK")
     else
       DataFrames.DataFrame(_result)
