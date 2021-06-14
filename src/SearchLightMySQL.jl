@@ -1,6 +1,6 @@
 module SearchLightMySQL
 
-import MySQL, DataFrames, DataStreams, Logging
+import MySQL, DataFrames, Logging
 import SearchLight
 import DBInterface
 
@@ -19,7 +19,7 @@ function SearchLight.column_field_name()
 end
 
 const DatabaseHandle = MySQL.Connection
-const ResultHandle   = DataStreams.Data.Rows
+const ResultHandle   = MySQL.TextCursor
 
 const TYPE_MAPPINGS = Dict{Symbol,Symbol}( # Julia => MySQL
   :char       => :CHARACTER,
