@@ -129,7 +129,7 @@ end
 function SearchLight.query(sql::String, conn::DatabaseHandle = SearchLight.connection()) :: DataFrames.DataFrame
   try
     @info sql
-    @time _result = DBInterface.execute(conn, sql)
+    _result = DBInterface.execute(conn, sql)
 
     result = if startswith(sql, "INSERT ")
       DataFrames.DataFrame(SearchLight.LAST_INSERT_ID_LABEL => DBInterface.lastrowid(_result))
