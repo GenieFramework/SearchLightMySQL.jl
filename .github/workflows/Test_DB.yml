@@ -11,10 +11,10 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_DATABASE: test_database
+          MYSQL_DATABASE: searchlight_test
           MYSQL_HOST: 127.0.0.1
-          MYSQL_USER: admin
-          MYSQL_PASSWORD: rootpass
+          MYSQL_USER: mysql
+          MYSQL_PASSWORD: mysql
           MYSQL_ROOT_PASSWORD: rootpass
         ports:
           - 3306:3306
