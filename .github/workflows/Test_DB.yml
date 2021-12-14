@@ -7,14 +7,21 @@ jobs:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_DATABASE: test_database
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_USER: admin
+          MYSQL_PASSWORD: rootpass
+          MYSQL_ROOT_PASSWORD: rootpass
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - uses: actions/checkout@v2
-      - name: Set up MySQL
-        run: |
-          sudo systemctl start mysql.service
-      - name: Create database
-        run: |
-           mysqladmin -u root -p root create mysql_test
       - uses: julia-actions/setup-julia@latest
         with:
           version: '1.6.4'
