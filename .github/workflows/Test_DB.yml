@@ -20,17 +20,20 @@ jobs:
             mysql root password: 'mysql' # Required if "mysql user" is empty, default is empty. The root superuser password
             mysql user: 'mysql' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Can use secrets, too
             mysql password: 'mysql' # Required if "mysql user" exists. The password for the "mysql user"
-
+      - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@latest
         with:
           version: '1.6.4'
           arch: 'x64'
-      - name: Install SearchLight and SearchLightMySQL
-        uses: julia-actions/julia-buildpkg@master
+      - uses: julia-actions/julia-buildpkg@master
+      - name: Install SearchLight and SearchLightPostgreSQL
         run: |
           pwd
           julia -e 'using Pkg; Pkg.add(url="https://github.com/FrankUrbach/SearchLight.jl.git")'
           julia -e 'using Pkg; Pkg.add(url="https://github.com/FrankUrbach/SearchLightMySQL.jl.git")'
-          julia -e 'println(readdir("/__w/SearchLightMySQL.jl/SearchLightMySQL.jl"))'
+          julia -e 'import Pkg; Pkg.add("SafeTestsets")'
+          julia -e 'cd(joinpath(pwd(),"test"))'
+          julia -e 'using Pkg; Pkg.activate(".")'
+          julia -e 'using Pkg; Pkg.resolve()'
         shell: bash
       - uses: julia-actions/julia-runtest@master
