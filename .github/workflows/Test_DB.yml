@@ -25,8 +25,8 @@ jobs:
         with:
           version: '1.6.4'
           arch: 'x64'
-      - uses: julia-actions/julia-buildpkg@master
       - name: Install SearchLight and SearchLightMySQL
+        uses: julia-actions/julia-buildpkg@master
         run: |
           pwd
           julia -e 'using Pkg; Pkg.add(url="https://github.com/FrankUrbach/SearchLight.jl.git")'
