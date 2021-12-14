@@ -12,7 +12,9 @@ jobs:
       - name: Set up MySQL
         run: |
           sudo systemctl start mysql.service
-          mysqladmin -u root -p root create mysql_test
+      - name: Create database
+        run: |
+           mysqladmin -u root -p root create mysql_test
       - uses: julia-actions/setup-julia@latest
         with:
           version: '1.6.4'
