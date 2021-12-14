@@ -6,6 +6,7 @@ jobs:
   container-job:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
+    options: --user root
     # Docker Hub image that `container-job` executes in
     container: node:10.18-jessie
 
@@ -16,7 +17,7 @@ jobs:
             DB_USER: root
             DB_PASSWORD: root
         run: |
-            sudo /etc/init.d/mysql start
+            /etc/init.d/mysql start
             mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@latest
