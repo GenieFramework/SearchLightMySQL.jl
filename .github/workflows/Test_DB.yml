@@ -6,9 +6,10 @@ jobs:
   container-job:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
-    options: --user root
+
     # Docker Hub image that `container-job` executes in
     container: node:10.18-jessie
+      options: --user root
 
     steps:
       - name: Set up MySQL
