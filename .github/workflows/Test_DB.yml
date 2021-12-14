@@ -31,5 +31,6 @@ jobs:
           pwd
           julia -e 'using Pkg; Pkg.add(url="https://github.com/FrankUrbach/SearchLight.jl.git")'
           julia -e 'using Pkg; Pkg.add(url="https://github.com/FrankUrbach/SearchLightMySQL.jl.git")'
+          julia -e 'println(pwd())'
         shell: bash
       - uses: julia-actions/julia-runtest@master
