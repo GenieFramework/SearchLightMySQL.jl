@@ -1,5 +1,7 @@
 using SearchLight, SearchLight.Migrations, SearchLight.Relationships
 
+cd(@__DIR__)
+
 connection_file = joinpath(@__DIR__,"mysql_connection.yml")
 conn_info_postgres = SearchLight.Configuration.load(connection_file)
 const conn = SearchLight.connect(conn_info_postgres)

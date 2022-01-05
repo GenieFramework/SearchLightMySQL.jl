@@ -1,4 +1,4 @@
-name: PostgreSQLAdapter test
+name: MySQLAdapter test
 on: push
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_DATABASE: searchlight_test
+          MYSQL_DATABASE: searchlight_tests
           MYSQL_HOST: 127.0.0.1
           MYSQL_USER: mysql
           MYSQL_PASSWORD: mysql
@@ -24,16 +24,15 @@ jobs:
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@latest
         with:
-          version: '1.6.4'
+          version: '1.7.1'
           arch: 'x64'
       - uses: julia-actions/julia-buildpkg@master
       - name: Install SearchLight and SearchLightMySQL
         run: |
           pwd
-          julia -e 'using Pkg; Pkg.add(url="https://github.com/FrankUrbach/SearchLight.jl.git")'
-          julia -e 'using Pkg; Pkg.add(url="https://github.com/FrankUrbach/SearchLightMySQL.jl.git")'
+          julia -e 'using Pkg; Pkg.add(url="https://github.com/GenieFramework/SearchLight.jl.git")'
+          julia -e 'using Pkg; Pkg.add(url="https://github.com/GenieFramework/SearchLightMySQL.jl.git")'
           julia -e 'import Pkg; Pkg.add("SafeTestsets")'
-          julia -e 'cd(joinpath(pwd(),"test"))'
           julia -e 'using Pkg; Pkg.activate(".")'
           julia -e 'using Pkg; Pkg.resolve()'
         shell: bash
