@@ -1,3 +1,5 @@
+cd(@__DIR__)
+
 using Pkg
 
 using Test, TestSetExtensions, SafeTestsets
