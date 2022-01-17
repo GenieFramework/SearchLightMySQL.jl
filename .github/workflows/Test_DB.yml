@@ -1,0 +1,39 @@
+name: MySQLAdapter test
+on: push
+
+jobs:
+  # Label of the container job
+  container-job:
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_DATABASE: searchlight_tests
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_USER: mysql
+          MYSQL_PASSWORD: mysql
+          MYSQL_ROOT_PASSWORD: rootpass
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: julia-actions/setup-julia@latest
+        with:
+          version: '1.7.1'
+          arch: 'x64'
+      - uses: julia-actions/julia-buildpkg@master
+      - name: Install SearchLight and SearchLightMySQL
+        run: |
+          pwd
+          julia -e 'using Pkg; Pkg.add(url="https://github.com/GenieFramework/SearchLight.jl.git")'
+          julia -e 'using Pkg; Pkg.add(url="https://github.com/GenieFramework/SearchLightMySQL.jl.git")'
+          julia -e 'import Pkg; Pkg.add("SafeTestsets")'
+          julia -e 'using Pkg; Pkg.activate(".")'
+          julia -e 'using Pkg; Pkg.resolve()'
+        shell: bash
+      - uses: julia-actions/julia-runtest@master
