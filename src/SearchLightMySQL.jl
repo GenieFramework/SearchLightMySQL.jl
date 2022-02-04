@@ -407,16 +407,24 @@ end
 #### GENERATOR ####
 
 
-function SearchLight.Generator.FileTemplates.adapter_default_config()
-  """
-  $(SearchLight.config.app_env):
-    adapter:  MySQL
-    host:     127.0.0.1
-    port:     3306
-    database: yourdb
-    username: root
-    password: ""
-  """
+function SearchLight.Generator.FileTemplates.adapter_default_config(; database = SearchLight.config.app_env,
+                                                                      host = "127.0.0.1",
+                                                                      port = 3306,
+                                                                      username = "root",
+                                                                      password = "",
+                                                                      env = SearchLight.config.app_env,
+                                                                      env_val = """ENV["GENIE_ENV"]""") :: String
+"""
+env: $env_val
+
+$env:
+  adapter:  MySQL
+  host:     $host
+  port:     $port
+  database: $database
+  username: $username
+  password: $password
+"""
 end
 
 end
