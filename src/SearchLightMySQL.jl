@@ -51,8 +51,12 @@ const CONNECTIONS = DatabaseHandle[]
 Connects to the database and returns a handle.
 """
 function SearchLight.connect(conn_data::Dict = SearchLight.config.db_config_settings) :: DatabaseHandle
-  password = get(conn_data, "password", "")
+  password = get(conn_data, "password", get(ENV, "SEARCHLIGHT_PASSWORD", ""))
   password === nothing && (password = "")
+
+  username = get(conn_data, "username", get(ENV, "SEARCHLIGHT_USERNAME", ""))
+
+  host = get(conn_data, "host", get(ENV, "SEARCHLIGHT_HOST", ""))
 
   port = get(conn_data, "port", 3306)
   port === nothing && (port = 3306)
@@ -61,7 +65,7 @@ function SearchLight.connect(conn_data::Dict = SearchLight.config.db_config_sett
   client_flag = get(conn_data, "client_flag", MySQL.API.CLIENT_MULTI_STATEMENTS)
 
   push!(CONNECTIONS,
-        DBInterface.connect(MySQL.Connection, conn_data["host"], conn_data["username"], password;
+        DBInterface.connect(MySQL.Connection, host, username, password;
                             db = conn_data["database"], port = port, unix_socket = unix_socket, client_flag = client_flag,
                             opts = Dict(getfield(MySQL.API, Symbol(k))=>v for (k,v) in get!(conn_data, "options", Dict()))
                             )
