@@ -62,13 +62,14 @@ function SearchLight.connect(conn_data::Dict = SearchLight.config.db_config_sett
   port === nothing && (port = 3306)
 
   unix_socket = get(conn_data, "unix_socket", MySQL.API.MYSQL_DEFAULT_SOCKET)
-  client_flag = get(conn_data, "client_flag", MySQL.API.CLIENT_MULTI_STATEMENTS)
 
   push!(CONNECTIONS,
         DBInterface.connect(MySQL.Connection, host, username, password;
-                            db = conn_data["database"], port = port, unix_socket = unix_socket, client_flag = client_flag,
-                            opts = Dict(getfield(MySQL.API, Symbol(k))=>v for (k,v) in get!(conn_data, "options", Dict()))
-                            )
+                            db = conn_data["database"], port = port, unix_socket = unix_socket,
+                            NamedTuple(
+                              Dict(Symbol(k) => v for (k,v) in get!(conn_data, "options", Dict()))
+                            )...
+                          )
   )[end]
 end
 
@@ -148,7 +149,7 @@ function SearchLight.query(sql::String, conn::DatabaseHandle = SearchLight.conne
     @error """MySQL error when running
               $sql """
 
-    if (ex.errno == 2013 || ex.errno == 2006)
+    if hasfield(typeof(ex), :errno) && (ex.errno == 2013 || ex.errno == 2006)
       @warn ex, " ...Attempting reconnection"
 
       pop!(CONNECTIONS)
