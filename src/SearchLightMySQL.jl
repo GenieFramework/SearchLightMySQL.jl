@@ -343,7 +343,7 @@ end
 
 function SearchLight.Migration.column(name::Union{String,Symbol}, column_type::Union{String,Symbol}, options::Any = ""; default::Any = nothing, limit::Union{Int,Nothing,String} = nothing, not_null::Bool = false) :: String
   if get(TYPE_LENGTHS, column_type, nothing) !== nothing
-    limit = get(TYPE_LENGTHS, column_type)
+    limit = TYPE_LENGTHS[column_type]
   end
 
   "`$name` $(TYPE_MAPPINGS[column_type] |> string) " *
